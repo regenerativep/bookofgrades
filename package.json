@@ -1,0 +1,19 @@
+{
+  "name": "bookofgrades",
+  "version": "1.0.0",
+  "description": "an open source gradebook service",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/regenerativep/jsbookofgrades.git"
+  },
+  "author": "regenerativep",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/regenerativep/jsbookofgrades/issues"
+  },
+  "homepage": "https://github.com/regenerativep/jsbookofgrades#readme"
+}
