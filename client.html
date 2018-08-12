@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script>
+            var Socket;
+            var StudentAgeInput, StudentNameInput, StudentCreateButton;
+            function Connect(addr)
+            {
+                Socket = new WebSocket(addr)
+                Socket.onopen = function(ev) {
+                    Socket.onmessage = function(ev) {
+                        console.log(ev)
+                    };
+                };
+            }
+            function SendMessage(msg)
+            {
+                if(Socket.readyState != 1)
+                {
+                    return;
+                }
+                if(typeof msg == "string")
+                {
+                    Socket.send(msg);
+                }
+                else
+                {
+                    Socket.send(JSON.stringify(msg))
+                }
+            }
+            window.addEventListener("load", function() {
+                StudentNameInput = document.getElementById("stdnt_name");
+                StudentAgeInput = document.getElementById("stdnt_age");
+                StudentCreateButton = document.getElementById("stdnt_create");
+                StudentCreateButton.addEventListener("click", function() {
+                    var name = StudentNameInput.value,
+                        age = parseInt(StudentAgeInput.value);
+                    SendMessage({
+                        type: 1,
+                        name: name,
+                        age: age
+                    });
+                });
+                Connect("ws://127.0.0.1:5524");
+            });
+        </script>
+    </head>
+    <body>
+        <h1>gradebook</h1>
+        <h2>students</h2>
+        <input type="text" name="student name" value="Magestic Lightbulb" id="stdnt_name"><br>
+        <input type="text" name="student age" value="14" id="stdnt_age"><br>
+        <input type="button" value="create student" id="stdnt_create">
+    </body>
+</html>
