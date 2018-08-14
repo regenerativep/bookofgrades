@@ -2,14 +2,40 @@
 <html>
     <head>
         <script type="text/javascript" src="./client.js"></script>
+        <link rel="stylesheet" type="text/css" href="./client.css">
     </head>
     <body>
-        <h1>gradebook</h1>
-        <h2>students</h2>
-        <input type="text" name="student name" value="Magestic Lightbulb" id="stdnt_cname"><br>
-        <input type="text" name="student age" value="14" id="stdnt_age"><br>
-        <input type="button" value="create student" id="stdnt_create"><br>
-        <input type="text" name="student name" value="Magestic Lightbulb" id="stdnt_gname"><br>
-        <input type="button" value="get student" id="stdnt_get">
+        <div class="toparea">
+            <div class="toptitle">
+                <p>Book of Grades</p>
+            </div>
+            <div class="navbar">
+                <div class="navitem" id="nav_home">
+                    <p>home</p>
+                </div>
+                <div class="navitem" id="nav_students">
+                    <p>students</p>
+                </div>
+                <div class="navitem" id="nav_classes">
+                    <p>classes</p>
+                </div>
+            </div>
+        </div>
+        <div id="content" class="content">
+            <div id="tab_students" style="display:none;">
+                <p class="tabtitle">students</p>
+                <input type="text" name="student name" value="Magestic Lightbulb" id="stdnt_cname"><br>
+                <input type="text" name="student age" value="14" id="stdnt_age"><br>
+                <input type="button" value="create student" id="stdnt_create"><br>
+                <input type="text" name="student name" value="Magestic Lightbulb" id="stdnt_gname"><br>
+                <input type="button" value="get student" id="stdnt_get">
+            </div>
+            <div id="tab_home" style="display:block;">
+                <p class="tabtitle">home</p>
+            </div>
+            <div id="tab_classes" style="display:none;">
+                <p class="tabtitle">classes</p>
+            </div>
+        </div>
     </body>
 </html>

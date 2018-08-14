@@ -1,0 +1,56 @@
+body {
+    background-color: rgb(66, 66, 66);
+    font-size: 16px;
+    font-family: Verdana, Geneva, sans-serif;
+    margin: 0px;
+    padding: 0px;
+}
+.toparea {
+    display: block;
+    background-color: rgb(75, 75, 75);
+    margin: 0px;
+    padding: 0px;
+    height: 9em;
+}
+.toptitle {
+    display: block;
+    background-color: rgb(31, 31, 31);
+    margin: 0px;
+    font-size: 3em;
+    height: 3em;
+    color: rgb(255, 255, 255);
+    padding-left: 1em;
+    padding-right: 1em;
+    float: left;
+    overflow: hidden;
+}
+.navbar {
+    margin: 0px;
+    display: block;
+    color: rgb(210, 210, 210);
+    height: 100%;
+    float: left;
+}
+.navitem {
+    margin: 0px;
+    padding-left: 1em;
+    padding-right: 1em;
+    display: block;
+    width: 10em;
+    height: 100%;
+    float: left;
+    text-align: center;
+}
+.navitem p {
+    font-size: 2em;
+}
+.navitem:hover {
+    background-color: rgb(82, 82, 82);
+}
+.tabtitle {
+    color: rgb(255, 255, 255);
+    font-size: 2.5em;
+}
+.content {
+    padding-left: 1em;
+}
