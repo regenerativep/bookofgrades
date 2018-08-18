@@ -10,6 +10,37 @@ var server = new WebSocket.Server({
 
 var students = [];
 var connections = [];
+var incomingTypes = [];
+
+addIncomingType(0, function() {});
+addIncomingType(1, function(data, ws) {
+    var stdnt = new Student({
+        name: data.name,
+        age: data.age
+    });
+    students.push(stdnt);
+    console.log("created student %s", stdnt.name);
+});
+addIncomingType(2, function(data, ws) {
+    var stdnt = getStudent(data.name);
+    sendMessage({
+        type: 1,
+        data: stdnt.getData()
+    }, ws);
+    console.log("sent data for student %s", stdnt.name);
+});
+addIncomingType(3, function(data, ws) {
+    var stdnt_list = [];
+    for(var i = 0; i < students.length; i++)
+    {
+        stdnt_list.push(students[i].getData());
+    }
+    sendMessage({
+        type: 2,
+        data: stdnt_list
+    }, ws);
+    console.log("sent all student data");
+});
 
 server.on("connection", function(ws) {
     var cnnc = new Connection(ws, getNextAvailableConnectionId());
@@ -17,26 +48,14 @@ server.on("connection", function(ws) {
     console.log("client " + cnnc.id + " connected");
     ws.on("message", function(msg) {
         var msgobj = JSON.parse(msg);
-        switch(msgobj.type)
+        for(var i = 0; i < incomingTypes.length; i++)
         {
-            case 0:
+            var inc = incomingTypes[i];
+            if(inc.type === msgobj.type)
+            {
+                inc.action(msgobj, ws);
                 break;
-            case 1: //student creation
-                var stdnt = new Student({
-                    name: msgobj.name,
-                    age: msgobj.age
-                });
-                students.push(stdnt);
-                console.log("created student %s", stdnt.name);
-                break;
-            case 2: //student request
-                var stdnt = getStudent(msgobj.name);
-                sendMessage({
-                    type: 1,
-                    data: stdnt.getData()
-                }, ws);
-                console.log("sent data for student %s", stdnt.name);
-                break;
+            }
         }
     });
     ws.on("close", function(code, reason) {
@@ -121,4 +140,11 @@ function connectionsHaveId(id)
         }
     }
     return false;
+}
+function addIncomingType(type, action)
+{
+    incomingTypes.push({
+        type: type,
+        action: action
+    });
 }

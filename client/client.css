@@ -47,10 +47,41 @@ body {
 .navitem:hover {
     background-color: rgb(82, 82, 82);
 }
+.sub_navbar {
+    margin: 0px;
+    display: block;
+    color: rgb(210, 210, 210);
+    background-color: rgb(60, 60, 60);
+    height: 3em;
+}
+.sub_navitem {
+    margin: 0px;
+    padding-left: 0.5em;
+    padding-right: 0.5em;
+    display: block;
+    width: 8em;
+    height: 100%;
+    float: left;
+    text-align: center;
+}
+.sub_navitem p {
+    margin-top: 0.33em; /*magic*/
+    display: inline-block;
+    font-size: 1.5em;
+}
+.sub_navitem:hover {
+    background-color: rgb(82, 82, 82)
+}
+.sub_content {
+    padding: 1em;
+}
 .tabtitle {
     color: rgb(255, 255, 255);
     font-size: 2.5em;
 }
-.content {
-    padding-left: 1em;
+.noselect { /*https://stackoverflow.com/questions/10809995/css-disable-text-selection*/
+    -webkit-user-select: none;  
+    -moz-user-select: none;    
+    -ms-user-select: none;      
+    user-select: none;
 }

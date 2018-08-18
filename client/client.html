@@ -10,25 +10,45 @@
                 <p>Book of Grades</p>
             </div>
             <div class="navbar">
-                <div class="navitem" id="nav_home">
-                    <p>home</p>
+                <div class="navitem" id="nav_home" style="">
+                    <p class="noselect">home</p>
                 </div>
                 <div class="navitem" id="nav_students">
-                    <p>students</p>
+                    <p class="noselect">students</p>
                 </div>
                 <div class="navitem" id="nav_classes">
-                    <p>classes</p>
+                    <p class="noselect">classes</p>
                 </div>
             </div>
         </div>
         <div id="content" class="content">
             <div id="tab_students" style="display:none;">
-                <p class="tabtitle">students</p>
-                <input type="text" name="student name" value="Magestic Lightbulb" id="stdnt_cname"><br>
-                <input type="text" name="student age" value="14" id="stdnt_age"><br>
-                <input type="button" value="create student" id="stdnt_create"><br>
-                <input type="text" name="student name" value="Magestic Lightbulb" id="stdnt_gname"><br>
-                <input type="button" value="get student" id="stdnt_get">
+                <!--<p class="tabtitle">students</p>-->
+                <div id="stdnt_navbar" class="sub_navbar">
+                    <div id="stdnt_nav_create" class="sub_navitem">
+                        <p class="noselect">create</p>
+                    </div>
+                    <div id="stdnt_nav_get" class="sub_navitem">
+                        <p class="noselect">get</p>
+                    </div>
+                    <div id="stdnt_nav_list" class="sub_navitem">
+                        <p class="noselect">list</p>
+                    </div>
+                </div>
+                <div id="stdnt_content" class="sub_content">
+                    <div id="stdnt_tab_create" style="display:block;">
+                        <input type="text" name="student name" placeholder="full name" id="stdnt_cname"><br>
+                        <input type="text" name="student age" placeholder="age" id="stdnt_age"><br>
+                        <input type="button" value="create student" id="stdnt_create"><br>
+                    </div>
+                    <div id="stdnt_tab_get" style="display:none;">
+                        <input type="text" name="student name" placeholder="full name" id="stdnt_gname"><br>
+                        <input type="button" value="get student" id="stdnt_get">
+                    </div>
+                    <div id="stdnt_tab_list" style="display:none;">
+
+                    </div>
+                </div>
             </div>
             <div id="tab_home" style="display:block;">
                 <p class="tabtitle">home</p>

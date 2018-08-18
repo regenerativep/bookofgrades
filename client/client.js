@@ -1,5 +1,7 @@
 var Socket;
-var StudentGet, StudentCreate, Navbar, Content;
+var Main;
+//var StudentGet, StudentCreate, Navbar, Content;
+var Student, Home, Classes;
 function Connect(addr)
 {
     Socket = new WebSocket(addr)
@@ -12,7 +14,10 @@ function Connect(addr)
                     break;
                 case 1: //student information
                     stdnt_data = msgobj.data;
-                    console.log(stdnt_data);
+                    break;
+                case 2: //list of all student data
+                    stdnts = msgobj.data;
+                    
                     break;
             }
         };
@@ -33,62 +38,84 @@ function SendMessage(msg)
         Socket.send(JSON.stringify(msg))
     }
 }
-window.addEventListener("load", function() {
-    StudentCreate = {
-        name: document.getElementById("stdnt_cname"),
-        age: document.getElementById("stdnt_age"),
-        button: document.getElementById("stdnt_create")
+function loadNavbar(pre, part)
+{
+    for(var i = 0; i < part.names.length; i++)
+    {
+        var name = part.names[i];
+        part.navbar[name] = document.getElementById(pre + "nav_" + name);
+        part.content[name] = document.getElementById(pre + "tab_" + name);
+
+        part.navbar[name].addEventListener("click", (function(name) { return function() {
+            for(var j = 0; j < part.names.length; j++)
+            {
+                if(part.names[j] !== name)
+                {
+                    part.content[part.names[j]].style.display = "none";
+                    part.navbar[part.names[j]].style.backgroundColor = "transparent";
+                }
+            }
+            part.content[name].style.display = "block";
+            part.navbar[name].style.backgroundColor = "rgb(82, 82, 82)"
+        }; })(name));
+    }
+    if(part.names.length > 0)
+    {
+        part.navbar[part.names[0]].click();
+    }
+}
+function loadStudentTab()
+{
+    //todo make better
+    Student = {
+        names: ["create", "get", "list"],
+        create: {
+            name: document.getElementById("stdnt_cname"),
+            age: document.getElementById("stdnt_age"),
+            button: document.getElementById("stdnt_create")
+        },
+        get: {
+            name: document.getElementById("stdnt_gname"),
+            button: document.getElementById("stdnt_get")
+        },
+        navbar: {},
+        content: {
+            container: document.getElementById("stdnt_content")
+        }
     };
-    StudentCreate.button.addEventListener("click", function() {
-        var name = StudentCreate.name.value,
-            age = parseInt(StudentCreate.age.value);
+    loadNavbar("stdnt_", Student);
+    
+    Student.create.button.addEventListener("click", function() {
+        var name = Student.create.name.value,
+            age = parseInt(Student.create.age.value);
+        Student.create.name.value = "";
+        Student.create.age.value = "";
         SendMessage({
             type: 1,
             name: name,
             age: age
         });
     });
-    StudentGet = {
-        name: document.getElementById("stdnt_gname"),
-        button: document.getElementById("stdnt_get")
-    };
-    StudentGet.button.addEventListener("click", function() {
-        var name = StudentGet.name.value;
+    Student.get.button.addEventListener("click", function() {
+        var name = Student.get.name.value;
+        Student.get.name.value = "";
         SendMessage({
             type: 2,
             name: name
         });
     });
-    Navbar = {
-        home: document.getElementById("nav_home"),
-        students: document.getElementById("nav_students"),
-        classes: document.getElementById("nav_classes")
-    };
-    var names = ["students", "home", "classes"];
-    Content = {
-        container: document.getElementById("content"),
-        students: document.getElementById("tab_students"),
-        home: document.getElementById("tab_home"),
-        classes: document.getElementById("tab_classes")
-    };
-    function resetContent()
-    {
-        for(var i = 0; i < names.length; i++)
-        {
-            Content[names[i]].style.display = "none";
+}
+window.addEventListener("load", function() {
+    Main = {
+        names: ["home", "students", "classes"],
+        navbar: {},
+        content: {
+            container: document.getElementById("content"),
         }
-    }
-    Navbar.home.addEventListener("click", function() {
-        resetContent();
-        Content.home.style.display = "block";
-    });
-    Navbar.students.addEventListener("click", function() {
-        resetContent();
-        Content.students.style.display = "block";
-    });
-    Navbar.classes.addEventListener("click", function() {
-        resetContent();
-        Content.classes.style.display = "block";
-    });
+    };
+    loadNavbar("", Main);
+
+    loadStudentTab();
+    
     Connect("ws://127.0.0.1:5524");
 });
