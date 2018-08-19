@@ -1,8 +1,8 @@
 "use strict";
-var getIndexObject;
-var start = function(gIO)
+var program;
+var start = function(program)
 {
-    getIndexObject = gIO;
+    this.program = program;
 };
 var getData = function()
 {

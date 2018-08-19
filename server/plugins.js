@@ -2,8 +2,8 @@
 const FS = require("fs");
 const PATH = require("path");
 
-
 var plugins = [];
+var clientPlugins = [];
 
 var isDirectory = function(src)
 {
@@ -15,44 +15,58 @@ var getDirectories = function(src) //https://stackoverflow.com/questions/1811220
         return PATH.join(src, name);
     }).filter(isDirectory);
 };
-var loadPlugin = function(name)
+var getFile = function(fname)
 {
-
+    return FS.readFileSync(fname, "utf8");
+};
+var loadPlugin = function(dir)
+{
+    var serverDir = dir + "/server.js";
+    var clientDir = dir + "/client.js";
+    if(FS.existsSync(serverDir))
+    {
+        var plugin;
+        try
+        {
+            plugin = require(serverDir);
+        }
+        catch
+        {
+            console.log("failed to load plugin at " + serverDir);
+            continue;
+        }
+        if(typeof plugin.getData === "function")
+        {
+            var plugindata = plugin.getData();
+            plugins.push({
+                name: plugindata.name,
+                version: plugindata.version,
+                plugin: plugin
+            });
+            var clientPlugin = getFile(clientDir); //we're sending the file so that the client can run it
+            if(clientPlugin.length !== 0)
+            {
+                clientPlugins.push({
+                    name: plugindata.name,
+                    version: plugindata.version,
+                    plugin: clientPlugin
+                });
+            }
+        }
+        else
+        {
+            console.log("failed to get plugin data at " + serverDir);
+            continue;
+        }
+    }
 };
 var loadPlugins = function(pluginDirectory)
 {
     var dirs = getDirectories(pluginDirectory);
     for(var i = 0; i < dirs.length; i++)
     {
-        var dir = "./" + dirs[i].replace("\\", "/") + "/server.js";
-        if(FS.existsSync(dir))
-        {
-            var plugin;
-            try
-            {
-                plugin = require(dir);
-            }
-            catch
-            {
-                console.log("failed to load plugin at " + dir);
-                continue;
-            }
-            if(typeof plugin.getData === "function")
-            {
-                var plugindata = plugin.getData();
-                var obj = {
-                    name: plugindata.name,
-                    version: plugindata.version,
-                    plugin: plugin
-                };
-                plugins.push(obj);
-            }
-            else
-            {
-                console.log("failed to get plugin data at " + dir);
-                continue;
-            }
-        }
+        var dir = "./" + dirs[i].replace("\\", "/"); //dont know if this is dependent on OS or what, but for it to work i need forward slash
+        loadPlugin(dir);
     }
 };
 var startPlugins = function(getIndexObject)
@@ -76,3 +90,4 @@ var startPlugins = function(getIndexObject)
 exports.loadPlugin = loadPlugin;
 exports.loadPlugins = loadPlugins;
 exports.startPlugins = startPlugins;
+exports.clientPlugins = clientPlugins;
