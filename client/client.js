@@ -1,4 +1,6 @@
 "use strict";
+var program;
+
 var Program = (function() {
     function Program()
     {
@@ -9,9 +11,11 @@ var Program = (function() {
                 container: document.getElementById("content"),
             }
         };
-        this.loadNavbar("", Main);
+        this.loadNavbar("", this.main);
         this.loadStudentTab();
         this.incomingTypes = [];
+        this.initBasicTypes();
+        this.plugins = [];
     }
     Program.prototype.initBasicTypes = function()
     {
@@ -26,8 +30,25 @@ var Program = (function() {
             //do something here
         });
         this.addIncomingType(3, function(data) { //plugins
-            //todo
-        })
+            console.log("loading plugins..");
+            for(var i = 0; i < data.plugins.length; i++)
+            {
+                program.loadPlugin(data.plugins[i]);
+            }
+            program.startPlugins();
+        });
+    };
+    Program.prototype.loadPlugin = function(plugin)
+    {
+        plugin.plugin = eval(plugin.plugin);
+        this.plugins.push(plugin);
+    };
+    Program.prototype.startPlugins = function()
+    {
+        for(var i = 0; i < this.plugins.length; i++)
+        {
+            this.plugins[i].plugin.start();
+        }
     };
     Program.prototype.addIncomingType = function(type, action)
     {
@@ -38,13 +59,13 @@ var Program = (function() {
     };
     Program.prototype.connect = function(addr)
     {
-        this.socket = new WebSocket(addr)
+        this.socket = new WebSocket(addr);
         this.socket.onopen = function(ev) {
-            this.socket.onmessage = function(ev) {
+            program.socket.onmessage = function(ev) {
                 var msgobj = JSON.parse(ev.data);
-                for(var i = 0; i < this.incomingTypes.length; i++)
+                for(var i = 0; i < program.incomingTypes.length; i++)
                 {
-                    var inc = this.incomingTypes[i];
+                    var inc = program.incomingTypes[i];
                     if(inc.type === msgobj.type)
                     {
                         inc.action(msgobj);
@@ -52,6 +73,9 @@ var Program = (function() {
                     }
                 }
             };
+            program.sendMessage({
+                type: "ready"
+            });
         };
     };
     Program.prototype.sendMessage = function(msg)
@@ -136,9 +160,9 @@ var Program = (function() {
             });
         });
     };
+    return Program;
 }());
 
-var program;
 window.addEventListener("load", function() {
     program = new Program();
     program.connect("ws://127.0.0.1:5524");

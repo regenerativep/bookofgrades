@@ -45,27 +45,29 @@ class Program
             }, ws);
             console.log("sent all student data");
         });
+        this.addIncomingType("ready", function(data, ws) {
+            console.log("sending plugins");
+            program.sendMessage({
+                type: 3,
+                plugins: plugins.clientPlugins
+            }, ws);
+        });
     }
     initServer()
     {
         this.server = new WebSocket.Server({
             port: 5524,
         });
-        this.server.on("connection", function(ws) {
-            var cnnc = new Connection(ws, getNextAvailableConnectionId());
-            this.connections.push(cnnc);
+        this.server.on("connection", (function(prgm) { return function(ws) {
+            var cnnc = new Connection(ws, prgm.getNextAvailableConnectionId());
+            prgm.connections.push(cnnc);
             console.log("client " + cnnc.id + " connected");
-
-            sendMessage({
-                type: 3,
-                plugins: plugins.clientPlugins
-            }, ws);
 
             ws.on("message", function(msg) {
                 var msgobj = JSON.parse(msg);
-                for(var i = 0; i < this.incomingTypes.length; i++)
+                for(var i = 0; i < prgm.incomingTypes.length; i++)
                 {
-                    var inc = this.incomingTypes[i];
+                    var inc = prgm.incomingTypes[i];
                     if(inc.type === msgobj.type)
                     {
                         inc.action(msgobj, ws);
@@ -75,22 +77,22 @@ class Program
             });
             ws.on("close", function(code, reason) {
                 console.log("connection " + cnnc.id + " closed");
-                removeConnection(cnnc);
+                prgm.removeConnection(cnnc);
             });
             ws.on("error", function(err) {
                 console.log("something went wrong with client " + cnnc.id);
                 console.log(err);
-                removeConnection(cnnc);
+                prgm.removeConnection(cnnc);
             });
-        });
-        server.on("error", function(err) {
+        }; })(this));
+        this.server.on("error", function(err) {
             console.log("something went wrong with the server");
             console.log(err);
         });
-        server.on("listening", function() {
+        this.server.on("listening", (function(srv) { return function() {
             console.log("server is running");
-            console.log(server.address());
-        });
+            console.log(srv.address());
+        }; })(this.server));
     }
     addIncomingType(type, action)
     {
@@ -147,7 +149,7 @@ class Program
     getNextAvailableConnectionId()
     {
         var id = 0;
-        while(connectionsHaveId(id))
+        while(this.connectionsHaveId(id))
         {
             id++;
         }
