@@ -5,18 +5,59 @@ var Program = (function() {
     function Program()
     {
         this.main = {
-            names: ["home", "students", "classes"],
+            names: ["home", "classes"],
             navbar: {},
             content: {
                 container: document.getElementById("content"),
             }
         };
         this.loadNavbar("", this.main);
-        this.loadStudentTab();
+        //this.loadStudentTab();
         this.incomingTypes = [];
         this.initBasicTypes();
         this.plugins = [];
     }
+    Program.prototype.addTab = function(name)
+    {
+        var navelement = this.addNavItem(name);
+        var contentelement = this.addContentItem(name);
+        this.main.navbar[name].addEventListener("click", (function(name, part) { return function() {
+            for(var j = 0; j < part.names.length; j++)
+            {
+                if(part.names[j] !== name)
+                {
+                    part.content[part.names[j]].style.display = "none";
+                    part.navbar[part.names[j]].style.backgroundColor = "transparent";
+                }
+            }
+            part.content[name].style.display = "block";
+            part.navbar[name].style.backgroundColor = "rgb(82, 82, 82)"
+        }; })(name, this.main));
+        return contentelement;
+    };
+    Program.prototype.addNavItem = function(name)
+    {
+        this.main.names.push(name);
+        var navelement = document.createElement("div");
+        navelement.classList.add("navitem");
+        navelement.id = "nav_" + name;
+        var navelement_text = document.createElementNS("p");
+        navelement_text.classList.add("noselect");
+        navelement_text.innerHTML = name;
+        navelement.appendChild(navelement_text);
+        document.getElementById("navbar").appendChild(navelement);
+        this.main.navbar[name] = navelement;
+        return navelement;
+    };
+    Program.prototype.addContentItem = function(name)
+    {
+        var contentelement = document.createElement("div");
+        contentelement.id = "tab_" + name;
+        contentelement.style.display = "none";
+        document.getElementById("content").appendChild(contentelement);
+        this.main.content[name] = contentelement;
+        return contentelement;
+    };
     Program.prototype.initBasicTypes = function()
     {
         this.addIncomingType(0, function() {});
@@ -47,7 +88,7 @@ var Program = (function() {
     {
         for(var i = 0; i < this.plugins.length; i++)
         {
-            this.plugins[i].plugin.start();
+            this.plugins[i].plugin.start(program);
         }
     };
     Program.prototype.addIncomingType = function(type, action)

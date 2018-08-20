@@ -1,7 +1,7 @@
 "use strict";
 
 const WebSocket = require("ws")
-const { Student } = require("./student.js");
+//const { Student } = require("./student.js");
 const { Connection } = require("./connection.js");
 const plugins = require("./plugins.js");
 
@@ -11,40 +11,7 @@ class Program
     {
         this.connections = [];
         this.incomingTypes = [];
-        this.students = [];
-        this.initBasicTypes();
-    }
-    initBasicTypes()
-    {
         this.addIncomingType(0, function() {});
-        this.addIncomingType(1, function(data, ws) {
-            var stdnt = new Student({
-                name: data.name,
-                age: data.age
-            });
-            this.students.push(stdnt);
-            console.log("created student %s", stdnt.name);
-        });
-        this.addIncomingType(2, function(data, ws) {
-            var stdnt = getStudent(data.name);
-            this.sendMessage({
-                type: 1,
-                data: stdnt.getData()
-            }, ws);
-            console.log("sent data for student %s", stdnt.name);
-        });
-        this.addIncomingType(3, function(data, ws) {
-            var stdnt_list = [];
-            for(var i = 0; i < this.students.length; i++)
-            {
-                stdnt_list.push(this.students[i].getData());
-            }
-            this.sendMessage({
-                type: 2,
-                data: stdnt_list
-            }, ws);
-            console.log("sent all student data");
-        });
         this.addIncomingType("ready", function(data, ws) {
             console.log("sending plugins");
             program.sendMessage({
@@ -133,18 +100,6 @@ class Program
         {
             sender.send(JSON.stringify(msg))
         }
-    }
-    getStudent(name)
-    {
-        for(var i = 0; i < this.students.length; i++)
-        {
-            var stdnt = this.students[i];
-            if(stdnt.name == name)
-            {
-                return stdnt;
-            }
-        }
-        return null;
     }
     getNextAvailableConnectionId()
     {

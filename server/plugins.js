@@ -30,7 +30,7 @@ var loadPlugin = function(dir)
         {
             plugin = require(serverDir);
         }
-        catch
+        catch(e)
         {
             console.log("failed to load plugin at " + serverDir);
             return;
