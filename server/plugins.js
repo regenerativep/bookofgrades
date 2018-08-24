@@ -17,7 +17,14 @@ var getDirectories = function(src) //https://stackoverflow.com/questions/1811220
 };
 var getFile = function(fname)
 {
-    return FS.readFileSync(fname, "utf8");
+    try
+    {
+        return FS.readFileSync(fname, "utf8");
+    }
+    catch(e)
+    {
+        return "";
+    }
 };
 var loadPlugin = function(dir)
 {

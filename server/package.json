@@ -17,6 +17,7 @@
   },
   "homepage": "https://github.com/regenerativep/jsbookofgrades#readme",
   "dependencies": {
+    "express": "^4.16.3",
     "ws": "^6.0.0"
   }
 }

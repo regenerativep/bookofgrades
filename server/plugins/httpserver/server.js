@@ -1,15 +1,22 @@
 "use strict";
 const HTTP = require("http");
+const Express = require("express");
 var program;
 var server;
-var start = function(program)
+var port;
+var start = function(prgm)
 {
-    this.program = program;
-    startServer();
+    program = prgm;
+    startServer(8080);
 };
-var startServer = function()
+var startServer = function(p)
 {
-    //todo
+    port = p;
+    server = Express();
+    server.use("/", Express.static("public"));
+    server.listen(port, (function(port) { return function() {
+        console.log("http server running on port " + port);
+    }; })(port));
 };
 var getData = function()
 {
