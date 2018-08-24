@@ -7,7 +7,14 @@ var Students = (function() {
     Students.prototype.start = function(program)
     {
         this.content = program.addTab("students");
-        this.content.innerHTM = "hello there";
+        
+    };
+    Students.prototype.generatePage = function()
+    {
+        var titleelement = document.createElement("p");
+        textelement.classList.add("tabtitle");
+        textelement.innerText = "Students";
+        this.content.appendChild(textelement);
     };
     return Students;
 }());

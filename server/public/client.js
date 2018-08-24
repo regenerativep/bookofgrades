@@ -41,7 +41,7 @@ var Program = (function() {
         var navelement = document.createElement("div");
         navelement.classList.add("navitem");
         navelement.id = "nav_" + name;
-        var navelement_text = document.createElementNS("p");
+        var navelement_text = document.createElement("p");
         navelement_text.classList.add("noselect");
         navelement_text.innerHTML = name;
         navelement.appendChild(navelement_text);

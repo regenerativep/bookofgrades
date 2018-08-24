@@ -5,40 +5,32 @@ body {
     margin: 0px;
     padding: 0px;
 }
-.toparea {
+.headerarea {
     display: block;
     background-color: rgb(75, 75, 75);
     margin: 0px;
     padding: 0px;
     height: 9em;
+    width: 12em;
+    float: left;
 }
 .toptitle {
-    display: block;
     background-color: rgb(31, 31, 31);
-    margin: 0px;
-    font-size: 3em;
+    font-size: 2em;
     height: 3em;
+    width: 8em;
     color: rgb(255, 255, 255);
-    padding-left: 1em;
-    padding-right: 1em;
-    float: left;
+    padding-left: 0.5em;
+    padding-right: 0.5em;
     overflow: hidden;
 }
 .navbar {
     margin: 0px;
-    display: block;
     color: rgb(210, 210, 210);
     height: 100%;
-    float: left;
 }
 .navitem {
-    margin: 0px;
-    padding-left: 1em;
-    padding-right: 1em;
-    display: block;
-    width: 10em;
-    height: 100%;
-    float: left;
+    width: 12em;
     text-align: center;
 }
 .navitem p {
@@ -46,6 +38,12 @@ body {
 }
 .navitem:hover {
     background-color: rgb(82, 82, 82);
+}
+.content {
+    display: block;
+    float: left;
+    position: absolute;
+    left: 20em;
 }
 .sub_navbar {
     margin: 0px;
