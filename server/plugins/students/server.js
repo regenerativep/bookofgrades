@@ -17,39 +17,40 @@ class Student
     }
 }
 
-var start = function(program)
+var program, students, stdntPlg;
+var start = function(prgm)
 {
-    this.program = program;
-    this.students = [];
+    program = prgm;
+    students = [];
     
-    var stdntPlg = this;
-    program.addIncomingType("createStudent", function(data, ws) {
+    stdntPlg = this;
+    program.addIncomingType("createStudent", function(data, cnnc) {
         var stdnt = new Student({
             name: data.name,
             age: data.age
         });
-        stdntPlg.students.push(stdnt);
-        console.log("created student %s", stdnt.name);
+        students.push(stdnt);
+        console.log(cnnc.id + " created student %s", stdnt.name);
     });
-    program.addIncomingType("getStudent", function(data, ws) {
+    program.addIncomingType("getStudent", function(data, cnnc) {
         var stdnt = getStudent(data.name);
         program.sendMessage({
             type: 1,
             data: stdnt.getData()
-        }, ws);
-        console.log("sent data for student %s", stdnt.name);
+        }, cnnc);
+        console.log(cnnc.id + " sent data for student %s", stdnt.name);
     });
-    program.addIncomingType("getStudentList", function(data, ws) {
+    program.addIncomingType("getStudentList", function(data, cnnc) {
         var stdnt_list = [];
-        for(var i = 0; i < stdntPlg.students.length; i++)
+        for(var i = 0; i < students.length; i++)
         {
-            stdnt_list.push(stdntPlg.students[i].getData());
+            stdnt_list.push(students[i].getData());
         }
         program.sendMessage({
             type: 2,
             data: stdnt_list
-        }, ws);
-        console.log("sent all student data");
+        }, cnnc);
+        console.log("sent all student data to " + cnnc.id);
     });
 };
 var getData = function()
@@ -61,9 +62,9 @@ var getData = function()
 };
 var getStudent = function(name)
 {
-    for(var i = 0; i < this.students.length; i++)
+    for(var i = 0; i < students.length; i++)
     {
-        var stdnt = this.students[i];
+        var stdnt = students[i];
         if(stdnt.name == name)
         {
             return stdnt;
@@ -75,3 +76,4 @@ var getStudent = function(name)
 exports.start = start;
 exports.getData = getData;
 exports.getStudent = getStudent;
+exports.students = students;

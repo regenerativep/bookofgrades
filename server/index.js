@@ -12,13 +12,30 @@ class Program
         this.connections = [];
         this.incomingTypes = [];
         this.addIncomingType(0, function() {});
-        this.addIncomingType("ready", function(data, ws) {
-            console.log("sending plugins");
-            program.sendMessage({
-                type: 3,
-                plugins: plugins.clientPlugins
-            }, ws);
+        this.addIncomingType("ready", function(data, cnnc) {
+            var sendPlugins = function() {
+                console.log("sending plugins");
+                program.sendMessage({
+                    type: 3,
+                    plugins: plugins.clientPlugins
+                }, cnnc);
+            };
+            sendPlugins();
+            var interval = setInterval(function() {
+                if(cnnc.hasReceivedPlugins || cnnc.socket.readyState > 1)
+                {
+                    clearInterval(interval);
+                }
+                else
+                {
+                    sendPlugins();
+                }
+            }, 2000);
         });
+        this.addIncomingType("receivedPlugins", function(data, cnnc) {
+            console.log("client " + cnnc.id + " has received plugins");
+            cnnc.hasReceivedPlugins = true;
+        })
     }
     initServer()
     {
@@ -32,14 +49,23 @@ class Program
 
             ws.on("message", function(msg) {
                 var msgobj = JSON.parse(msg);
+                var foundType = false;
                 for(var i = 0; i < prgm.incomingTypes.length; i++)
                 {
                     var inc = prgm.incomingTypes[i];
                     if(inc.type === msgobj.type)
                     {
-                        inc.action(msgobj, ws);
-                        break;
+                        inc.action(msgobj, cnnc);
+                        foundType = true;
                     }
+                }
+                if(!foundType)
+                {
+                    prgm.sendMessage({
+                        type: "unknownType",
+                        data: msgobj
+                    }, ws);
+                    console.log("client " + cnnc.id + " sent an unknown message");
                 }
             });
             ws.on("close", function(code, reason) {
@@ -79,6 +105,10 @@ class Program
     }
     sendMessage(msg, ws)
     {
+        if(typeof ws === "object")
+        {
+            ws = ws.socket;
+        }
         var sender;
         if(typeof ws === "undefined")
         {

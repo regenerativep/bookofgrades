@@ -5,34 +5,60 @@ var Program = (function() {
     function Program()
     {
         this.main = {
-            names: ["home", "classes"],
+            names: ["home"],
             navbar: {},
             content: {
                 container: document.getElementById("content"),
             }
         };
-        this.loadNavbar("", this.main);
-        //this.loadStudentTab();
+        this.loadNavbar();
         this.incomingTypes = [];
         this.initBasicTypes();
         this.plugins = [];
     }
+    Program.prototype.switchTab = function(name)
+    {
+        for(var i = 0; i < this.main.names.length; i++)
+        {
+            var iname = this.main.names[i];
+            var disp = "none",
+                bgCol = "transparent",
+                sel = false;
+            if(name === iname)
+            {
+                disp = "block";
+                bgCol = "rgb(82,82,82)";
+                sel = true;
+            }
+            this.main.navbar[iname].style.backgroundColor = bgCol;
+            this.main.navbar[iname].selected = sel;
+            this.main.content[iname].style.display = disp;
+        }
+    };
+    Program.prototype.setupNavItem = function(name, part)
+    {
+        var item = part.navbar[name];
+        item.addEventListener("click", (function(name, part, program) { return function() {
+            program.switchTab(name);
+        }; })(name, part, this));
+        item.addEventListener("mouseover", (function(name, part) { return function() {
+            if(!item.selected)
+            {
+                item.style.backgroundColor = "rgb(82,82,82)";
+            }
+        }; })(name, part));
+        item.addEventListener("mouseout", (function(name, part) { return function() {
+            if(!item.selected)
+            {
+                item.style.backgroundColor = "transparent";
+            }
+        }; })(name, part));
+    };
     Program.prototype.addTab = function(name)
     {
         var navelement = this.addNavItem(name);
         var contentelement = this.addContentItem(name);
-        this.main.navbar[name].addEventListener("click", (function(name, part) { return function() {
-            for(var j = 0; j < part.names.length; j++)
-            {
-                if(part.names[j] !== name)
-                {
-                    part.content[part.names[j]].style.display = "none";
-                    part.navbar[part.names[j]].style.backgroundColor = "transparent";
-                }
-            }
-            part.content[name].style.display = "block";
-            part.navbar[name].style.backgroundColor = "rgb(82, 82, 82)"
-        }; })(name, this.main));
+        this.setupNavItem(name, this.main);
         return contentelement;
     };
     Program.prototype.addNavItem = function(name)
@@ -60,7 +86,7 @@ var Program = (function() {
     };
     Program.prototype.initBasicTypes = function()
     {
-        this.addIncomingType(0, function() {});
+        this.addIncomingType(0, function() {});/*
         this.addIncomingType(1, function(data) { //singular student data
             var stdnt_data = msgobj.data;
             console.log(stdnt_data);
@@ -69,13 +95,16 @@ var Program = (function() {
             var stdnts = msgobj.data;
             console.log(stdnts);
             //do something here
-        });
+        });*/
         this.addIncomingType(3, function(data) { //plugins
             console.log("loading plugins..");
             for(var i = 0; i < data.plugins.length; i++)
             {
                 program.loadPlugin(data.plugins[i]);
             }
+            program.sendMessage({
+                type: "receivedPlugins"
+            });
             program.startPlugins();
         });
     };
@@ -88,7 +117,9 @@ var Program = (function() {
     {
         for(var i = 0; i < this.plugins.length; i++)
         {
-            this.plugins[i].plugin.start(program);
+            var plg = this.plugins[i];
+            console.log("starting plugin " + plg.name);
+            plg.plugin.start(program);
         }
     };
     Program.prototype.addIncomingType = function(type, action)
@@ -113,6 +144,7 @@ var Program = (function() {
                         break;
                     }
                 }
+                console.log(msgobj);
             };
             program.sendMessage({
                 type: "ready"
@@ -134,30 +166,19 @@ var Program = (function() {
             this.socket.send(JSON.stringify(msg))
         }
     };
-    Program.prototype.loadNavbar = function(pre, part)
+    Program.prototype.loadNavbar = function()
     {
-        for(var i = 0; i < part.names.length; i++)
+        var main = this.main;
+        for(var i = 0; i < main.names.length; i++)
         {
-            var name = part.names[i];
-            part.navbar[name] = document.getElementById(pre + "nav_" + name);
-            part.content[name] = document.getElementById(pre + "tab_" + name);
-    
-            part.navbar[name].addEventListener("click", (function(name) { return function() {
-                for(var j = 0; j < part.names.length; j++)
-                {
-                    if(part.names[j] !== name)
-                    {
-                        part.content[part.names[j]].style.display = "none";
-                        part.navbar[part.names[j]].style.backgroundColor = "transparent";
-                    }
-                }
-                part.content[name].style.display = "block";
-                part.navbar[name].style.backgroundColor = "rgb(82, 82, 82)"
-            }; })(name));
+            var name = main.names[i];
+            main.navbar[name] = document.getElementById("nav_" + name);
+            main.content[name] = document.getElementById("tab_" + name);
+            this.setupNavItem(name, main);
         }
-        if(part.names.length > 0)
+        if(main.names.length > 0)
         {
-            part.navbar[part.names[0]].click();
+            main.navbar[main.names[0]].click();
         }
     };
     Program.prototype.loadStudentTab = function()

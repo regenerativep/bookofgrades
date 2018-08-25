@@ -2,7 +2,7 @@
 {
     return {
         start: function() {
-            console.log("starting client for basicplugin");
+            //console.log("starting client for basicplugin");
         }
     };
 })();
