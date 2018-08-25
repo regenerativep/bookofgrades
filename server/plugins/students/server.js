@@ -35,7 +35,7 @@ var start = function(prgm)
     program.addIncomingType("getStudent", function(data, cnnc) {
         var stdnt = getStudent(data.name);
         program.sendMessage({
-            type: 1,
+            type: "receiveStudent",
             data: stdnt.getData()
         }, cnnc);
         console.log(cnnc.id + " sent data for student %s", stdnt.name);
@@ -47,7 +47,7 @@ var start = function(prgm)
             stdnt_list.push(students[i].getData());
         }
         program.sendMessage({
-            type: 2,
+            type: "receiveList",
             data: stdnt_list
         }, cnnc);
         console.log("sent all student data to " + cnnc.id);
@@ -70,8 +70,10 @@ var getStudent = function(name)
             return stdnt;
         }
     }
+    console.log("failed to find student \"" + name + "\"");
+    console.log(students);
     return null;
-}
+};
 
 exports.start = start;
 exports.getData = getData;

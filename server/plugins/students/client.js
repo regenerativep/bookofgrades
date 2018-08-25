@@ -6,43 +6,73 @@ var Students = (function() {
     }
     Students.prototype.start = function(program)
     {
+        var plg = this;
         program.addIncomingType("receiveStudent", function(data) {
-            var stdnt_data = msgobj.data;
-            this.displayStudent(stdnt_data);
+            var stdnt_data = data.data;
+            plg.displayStudent(stdnt_data);
         });
-
         this.content = program.addTab("students");
         this.generatePage();
     };
     Students.prototype.displayStudent = function(stdnt)
     {
-        this.getstudent.container.innerText = "name: " + stdnt.name + ", age: " + stdnt.age;
+        this.getStudentSection.container.innerText = "name: " + stdnt.name + ", age: " + stdnt.age;
     };
     Students.prototype.generatePage = function()
     {
-        this.titleelement = document.createElement("p");
-        this.titleelement.classList.add("tabtitle");
-        this.titleelement.innerText = "Students";
-        this.getstudent = {
+        this.titleElement = document.createElement("p");
+        this.titleElement.classList.add("tabtitle");
+        this.titleElement.innerText = "Students";
+        this.getStudentSection = {
             container: document.createElement("div"),
-            nameinput: document.createElement("input"),
-            getbutton: document.createElement("input")
+            nameInput: document.createElement("input"),
+            getButton: document.createElement("input")
         };
-        this.getstudent.nameinput.type = "text";
-        this.getstudent.nameinput.placeholder = "full name";
-        this.getstudent.getbutton.type = "button";
-        this.getstudent.getbutton.value = "get student";
+        this.getStudentSection.nameInput.type = "text";
+        this.getStudentSection.nameInput.placeholder = "full name";
+        this.getStudentSection.getButton.type = "button";
+        this.getStudentSection.getButton.value = "get student";
         var plg = this;
-        this.getstudent.getbutton.addEventListener("click", function() {
-            plg.getStudent(plg.getstudent.nameinput.value);
-            plg.getstudent.nameinput.value = "";
+        this.getStudentSection.getButton.addEventListener("click", function() {
+            plg.getStudent(plg.getStudentSection.nameInput.value);
+            plg.getStudentSection.nameInput.value = "";
         });
 
+        this.createStudentSection = {
+            nameInput: document.createElement("input"),
+            ageInput: document.createElement("input"),
+            createButton: document.createElement("input")
+        };
+        this.createStudentSection.nameInput.type = "text";
+        this.createStudentSection.nameInput.placeholder = "full name";
+        this.createStudentSection.ageInput.type = "text";
+        this.createStudentSection.ageInput.placeholder = "age";
+        this.createStudentSection.createButton.type = "button";
+        this.createStudentSection.createButton.value = "create student";
+        this.createStudentSection.createButton.addEventListener("click", function() {
+            var data = {
+                type: "createStudent",
+                name: plg.createStudentSection.nameInput.value,
+                age: parseInt(plg.createStudentSection.ageInput.value)
+            };
+            plg.createStudentSection.nameInput.value = "";
+            plg.createStudentSection.ageInput.value = "";
+            program.sendMessage(data);
+        });
 
-        this.content.appendChild(this.titleelement);
-        this.content.appendChild(this.getstudent.container);
-        this.content.appendChild(this.getstudent.nameinput);
-        this.content.appendChild(this.getstudent.getbutton);
+        var addBreak = function() {
+            plg.content.appendChild(document.createElement("br"));
+        };
+        this.content.appendChild(this.titleElement);
+        this.content.appendChild(this.getStudentSection.container);
+        this.content.appendChild(this.getStudentSection.nameInput);
+        this.content.appendChild(this.getStudentSection.getButton);
+        addBreak();
+        addBreak();
+        this.content.appendChild(this.createStudentSection.nameInput);
+        addBreak();
+        this.content.appendChild(this.createStudentSection.ageInput);
+        this.content.appendChild(this.createStudentSection.createButton);
     };
     Students.prototype.getStudent = function(name)
     {
