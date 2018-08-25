@@ -1,21 +1,21 @@
 {
   "name": "bookofgrades",
   "version": "1.0.0",
-  "description": "a js project to make an alternative to popular gradebook services like powerschool",
+  "description": "a project to make an alternative to popular gradebook services like powerschool",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/regenerativep/jsbookofgrades.git"
+    "url": "git+https://github.com/regenerativep/bookofgrades.git"
   },
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/regenerativep/jsbookofgrades/issues"
+    "url": "https://github.com/regenerativep/bookofgrades/issues"
   },
-  "homepage": "https://github.com/regenerativep/jsbookofgrades#readme",
+  "homepage": "https://github.com/regenerativep/bookofgrades#readme",
   "dependencies": {
     "express": "^4.16.3",
     "ws": "^6.0.0"
