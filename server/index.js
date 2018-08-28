@@ -1,12 +1,30 @@
 "use strict";
 
 const WebSocket = require("ws")
-//const { Student } = require("./student.js");
 const { Connection } = require("./connection.js");
 const plugins = require("./plugins.js");
 
 class Program
 {
+    /*  this.incomingTypes: object array
+        - contains a list of all of the possible types for data that can be received, along with what to do when received
+        this.connections: object array
+        - contains a list of all of the live connections, along with user information
+        this.server: WebSocket.Server
+        - the websocket server that lets clients connect to the gradebook
+        this.addIncomingType(type: any, action: function(data, connection))
+        - adds a new incoming type to this.incomingTypes
+        this.initServer(): void
+        - starts the online part of the program
+        this.removeConnection(connection: Connection): void
+        - removes a connection from the list given the connection to remove
+        this.sendMessage(message: string | object, destination: WebSocket | Connection): void
+        - sends the given message to the destination
+        this.getNextAvailableConnectionId(): int
+        - gets the next available connection id
+        this.connectionsHaveId(id: int): boolean
+        - checks if this.connections has a connection with the given id
+    */
     constructor()
     {
         this.connections = [];

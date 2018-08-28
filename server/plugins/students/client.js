@@ -1,5 +1,22 @@
 
 var Students = (function() {
+    /*  this.content: html element
+        - the container for the student tab
+        this.getStudentSection: object
+        - contains the elements for the get student section
+        this.titleElement: html element
+        - the element with title text
+        this.createStudentSection: object
+        - contains the elements for the create student section
+        this.start(program: Program): void
+        - starts the students plugin
+        this.displayStudent(student: object): void
+        - displays the given student to the user in the students tab
+        this.generatePage(): void
+        - generates the student tab
+        this.getStudent(name: string): void
+        - requests the student from the server
+    */
     function Students()
     {
 

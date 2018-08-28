@@ -2,6 +2,35 @@
 var program;
 
 var Program = (function() {
+    /*  this.main: object
+        - contains information on the tab elements and content
+        this.incomingTypes: object array
+        - contains a list on all of the possible types of data that can be received, along with what to do when the type is received
+        this.plugins: object array
+        - contains a list of all of the (client-side) plugins
+        this.socket: WebSocket
+        - the websocket used to communicate with the server
+        this.switchTab(name: string): void
+        - switches current tab to the tab under the given name
+        this.setupNavItem(name: string, part: object): void
+        - sets up event listeners for the nav button
+        this.addTab(name: string): html element
+        - creates a new tab with empty content, and returns the content element
+        this.addNavItem(name: string): html element
+        - creates and returns a new tab nav button
+        this.addContentItem(name: string): html element
+        - creates and returns a new tab content area
+        this.initBasicTypes(): void
+        - creates the basic incoming types
+        this.loadPlugin(plugin: object): void
+        - loads a single plugin
+        this.startPlugins(): void
+        - starts all of the loaded plugins
+        this.addIncomingtype(type: any, action: function(data)): void
+        - adds a new incoming type to this.incomingTypes
+        this.connect(address: string("ws://*")): void
+        - connects to the server at the specified address
+    */
     function Program()
     {
         this.main = {
@@ -38,8 +67,8 @@ var Program = (function() {
     Program.prototype.setupNavItem = function(name, part)
     {
         var item = part.navbar[name];
-        item.addEventListener("click", (function(name, part, program) { return function() {
-            program.switchTab(name);
+        item.addEventListener("click", (function(name, part, prgm) { return function() {
+            prgm.switchTab(name);
         }; })(name, part, this));
         item.addEventListener("mouseover", (function(name, part) { return function() {
             if(!item.selected)
@@ -86,27 +115,18 @@ var Program = (function() {
     };
     Program.prototype.initBasicTypes = function()
     {
-        this.addIncomingType(0, function() {});/*
-        this.addIncomingType(1, function(data) { //singular student data
-            var stdnt_data = msgobj.data;
-            console.log(stdnt_data);
-        });
-        this.addIncomingType(2, function(data) { //list of student data
-            var stdnts = msgobj.data;
-            console.log(stdnts);
-            //do something here
-        });*/
-        this.addIncomingType(3, function(data) { //plugins
+        this.addIncomingType(0, function() {});
+        this.addIncomingType(3, (function(prgm) { return function(data) { //plugins
             console.log("loading plugins..");
             for(var i = 0; i < data.plugins.length; i++)
             {
-                program.loadPlugin(data.plugins[i]);
+                prgm.loadPlugin(data.plugins[i]);
             }
-            program.sendMessage({
+            prgm.sendMessage({
                 type: "receivedPlugins"
             });
-            program.startPlugins();
-        });
+            prgm.startPlugins();
+        }; })(this));
     };
     Program.prototype.loadPlugin = function(plugin)
     {
@@ -119,7 +139,7 @@ var Program = (function() {
         {
             var plg = this.plugins[i];
             console.log("starting plugin " + plg.name);
-            plg.plugin.start(program);
+            plg.plugin.start(this);
         }
     };
     Program.prototype.addIncomingType = function(type, action)
@@ -132,12 +152,12 @@ var Program = (function() {
     Program.prototype.connect = function(addr)
     {
         this.socket = new WebSocket(addr);
-        this.socket.onopen = function(ev) {
-            program.socket.onmessage = function(ev) {
+        this.socket.onopen = (function(prgm) { return function(ev) {
+            prgm.socket.onmessage = function(ev) {
                 var msgobj = JSON.parse(ev.data);
-                for(var i = 0; i < program.incomingTypes.length; i++)
+                for(var i = 0; i < prgm.incomingTypes.length; i++)
                 {
-                    var inc = program.incomingTypes[i];
+                    var inc = prgm.incomingTypes[i];
                     if(inc.type === msgobj.type)
                     {
                         inc.action(msgobj);
@@ -146,10 +166,10 @@ var Program = (function() {
                 }
                 console.log(msgobj);
             };
-            program.sendMessage({
+            prgm.sendMessage({
                 type: "ready"
             });
-        };
+        }; })(this);
     };
     Program.prototype.sendMessage = function(msg)
     {
@@ -180,47 +200,6 @@ var Program = (function() {
         {
             main.navbar[main.names[0]].click();
         }
-    };
-    Program.prototype.loadStudentTab = function()
-    {
-        //todo make better
-        this.student = {
-            names: ["create", "get", "list"],
-            create: {
-                name: document.getElementById("stdnt_cname"),
-                age: document.getElementById("stdnt_age"),
-                button: document.getElementById("stdnt_create")
-            },
-            get: {
-                name: document.getElementById("stdnt_gname"),
-                button: document.getElementById("stdnt_get")
-            },
-            navbar: {},
-            content: {
-                container: document.getElementById("stdnt_content")
-            }
-        };
-        this.loadNavbar("stdnt_", this.student);
-        
-        this.student.create.button.addEventListener("click", function() {
-            var name = this.student.create.name.value,
-                age = parseInt(this.student.create.age.value);
-            this.student.create.name.value = "";
-            this.student.create.age.value = "";
-            this.sendMessage({
-                type: 1,
-                name: name,
-                age: age
-            });
-        });
-        this.student.get.button.addEventListener("click", function() {
-            var name = this.student.get.name.value;
-            this.student.get.name.value = "";
-            this.sendMessage({
-                type: 2,
-                name: name
-            });
-        });
     };
     return Program;
 }());

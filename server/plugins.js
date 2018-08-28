@@ -76,7 +76,7 @@ var loadPlugins = function(pluginDirectory)
         loadPlugin(dir);
     }
 };
-var startPlugins = function(getIndexObject)
+var startPlugins = function(prgm)
 {
     for(var i = 0; i < plugins.length; i++)
     {
@@ -84,7 +84,7 @@ var startPlugins = function(getIndexObject)
         if(typeof plg.plugin.start === "function")
         {
             console.log("starting " + plg.name);
-            plg.plugin.start(getIndexObject);
+            plg.plugin.start(prgm);
         }
         else
         {
@@ -94,7 +94,20 @@ var startPlugins = function(getIndexObject)
     }
 };
 
+/*  this.plugins: object array
+    - contains a list of all of the server-side plugins
+    this.clientPlugins: object array
+    - contains a list of all of the client-side plugins
+    this.loadPlugins(directory: string): void
+    - loads all of the plugins inside the given directory
+    this.loadPlugin(directory: string): void
+    - loads the plugin inside the given directory
+    this.startPlugins(program: Program): void
+    - starts the plugins with a reference to the program
+*/
+
 exports.loadPlugin = loadPlugin;
 exports.loadPlugins = loadPlugins;
 exports.startPlugins = startPlugins;
 exports.clientPlugins = clientPlugins;
+exports.plugins = plugins;

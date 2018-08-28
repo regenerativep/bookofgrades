@@ -26,5 +26,10 @@ var getData = function()
     };
 };
 
+/*  this.start(program: Program): void
+    - starts the http server
+    this.getData(): object
+    - gets the data of this plugin
+*/
 exports.start = start;
 exports.getData = getData;
