@@ -1,6 +1,4 @@
 "use strict";
-var program;
-
 var program, students, stdntPlg;
 var start = function(prgm)
 {
@@ -9,7 +7,7 @@ var start = function(prgm)
     
     stdntPlg = this;
     program.addIncomingType("createStudent", function(data, cnnc) {
-        stdntPlg.createStudent(data.name, data.age);
+        var stdnt = stdntPlg.createStudent(data.name, data.age);
         console.log(cnnc.id + " created student %s", stdnt.name);
     });
     program.addIncomingType("getStudent", function(data, cnnc) {
@@ -61,6 +59,7 @@ var createStudent = function(name, age)
         age: age
     };
     students.push(stdnt);
+    return stdnt;
 };
 /*  this.students: object array
     - a list of all of the students
@@ -70,7 +69,7 @@ var createStudent = function(name, age)
     - returns the plugin information for this plugin
     this.getStudent(name: string): object
     - find the student from the given name
-    this.createStudent(name: string, age: int)
+    this.createStudent(name: string, age: int): object
     - creates a student given a name and an age for the student
 */
 
