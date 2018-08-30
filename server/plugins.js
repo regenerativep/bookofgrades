@@ -40,6 +40,7 @@ var loadPlugin = function(dir)
         catch(e)
         {
             console.log("failed to load plugin at " + serverDir);
+            console.log(e);
             return;
         }
         if(typeof plugin.getData === "function")
@@ -62,7 +63,7 @@ var loadPlugin = function(dir)
         }
         else
         {
-            console.log("failed to get plugin data at " + serverDir);
+            console.log("no getData function on " + serverDir);
             return;
         }
     }

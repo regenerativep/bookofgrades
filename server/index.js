@@ -4,6 +4,8 @@ const WebSocket = require("ws")
 const { Connection } = require("./connection.js");
 const plugins = require("./plugins.js");
 
+var pluginSendInterval = 2000; //milliseconds
+
 class Program
 {
     /*  this.incomingTypes: object array
@@ -48,7 +50,7 @@ class Program
                 {
                     sendPlugins();
                 }
-            }, 2000);
+            }, pluginSendInterval);
         });
         this.addIncomingType("receivedPlugins", function(data, cnnc) {
             console.log("client " + cnnc.id + " has received plugins");

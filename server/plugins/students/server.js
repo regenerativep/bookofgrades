@@ -1,10 +1,42 @@
 "use strict";
+const FS = require("fs");
+const PATH = require("path");
+
+//maybe create a module to require for these functions?
+var isDirectory = function(src)
+{
+    return FS.lstatSync(src).isDirectory();
+};
+var getDirectories = function(src)
+{
+    return FS.readdirSync(src).map(function(name) {
+        return PATH.join(src, name);
+    }).filter(isDirectory);
+};
+var getFile = function(fname)
+{
+    try
+    {
+        return FS.readFileSync(fname, "utf8");
+    }
+    catch(e)
+    {
+        return "";
+    }
+};
+
+var studentsDir = "students.json";
+var studentSaveInterval = 30000;
 var program, students, stdntPlg;
 var start = function(prgm)
 {
     program = prgm;
     students = [];
-    
+    loadStudents();
+    setInterval(function() {
+        saveStudents();
+    }, studentSaveInterval);
+
     stdntPlg = this;
     program.addIncomingType("createStudent", function(data, cnnc) {
         var stdnt = stdntPlg.createStudent(data.name, data.age);
@@ -61,6 +93,35 @@ var createStudent = function(name, age)
     students.push(stdnt);
     return stdnt;
 };
+var saveStudents = function()
+{
+    var stdnts = JSON.stringify({students: students});
+    FS.writeFile(studentsDir, stdnts, function(err) {
+        if(err)
+        {
+            console.log("failed to save students");
+            console.log(stdnts);
+            console.log(err);
+        }
+        else
+        {
+            console.log("saved students to " + studentsDir);
+        }
+    });
+};
+var loadStudents = function()
+{
+    if(FS.existsSync(studentsDir))
+    {
+        var studentsFile = getFile(studentsDir);
+        students = JSON.parse(studentsFile).students;
+    }
+    else
+    {
+        console.log("no students file");
+    }
+};
+
 /*  this.students: object array
     - a list of all of the students
     this.start(program: Program): void
